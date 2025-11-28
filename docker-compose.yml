@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  # --- SERVIDOR WEB (PHP + Apache) ---
+  app:
+    build: ./docker
+    container_name: nextstore_app
+    ports:
+      - "80:80"
+    volumes:
+      - .:/var/www/html 
+    environment:
+      DB_HOST: db
+      DB_NAME: nextstore_db
+      DB_USER: user_next
+      DB_PASSWORD: pass_next
+    depends_on:
+      - db
+    networks:
+      - nextstore-net 
+  # --- BASE DE DATOS (MySQL) ---
+  db:
+    image: mysql:8.0
+    container_name: nextstore_db
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password  # Cambia esto en producción
+      MYSQL_DATABASE: nextstore_db
+      MYSQL_USER: user_next
+      MYSQL_PASSWORD: pass_next
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - nextstore-net
+
+  # --- GESTOR DE BD (phpMyAdmin) ---
+  pma:
+    image: phpmyadmin/phpmyadmin
+    container_name: nextstore_pma
+    environment:
+      PMA_HOST: db
+      PMA_USER: user_next
+      PMA_PASSWORD: pass_next
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
+    networks:
+      - nextstore-net
+
+volumes:
+  mysql_data:
+
+networks:
+  nextstore-net:
+    driver: bridge
