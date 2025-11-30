@@ -45,7 +45,6 @@ El proyecto está construido con tecnologías estándar de la industria, prioriz
 
 ## 👥 Autores
 * **Luciano Aliaga** - *Lead Developer*
-* **Matias Cerna** - *Developer*
 
 ---
 © 2025 NexStock. Todos los derechos reservados.
