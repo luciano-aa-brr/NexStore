@@ -1,27 +1,28 @@
 <?php
 namespace Src\Controllers;
 
-use Src\Config\BaseDatos;
-use Src\Models\Usuario;
+use Src\Models\Producto;
 
 class HomeController {
     
     public function index() {
-        // Verificamos si hay sesión activa
+        // CASO 1: USUARIO LOGUEADO -> VAMOS AL DASHBOARD
         if (isset($_SESSION['usuario_id'])) {
-            $titulo = "Panel de Control";
-            $mensaje_bienvenida = "Hola, " . $_SESSION['usuario_nombre'] . " 👋";
-            $boton_texto = "Ir a mis Productos";
-            $boton_link = "/productos"; // Crearemos esto en la próxima clase
-            $boton_logout = true; // Para mostrar botón de salir
-        } else {
+            $productoModel = new Producto();
+            $stats = $productoModel->obtenerEstadisticas($_SESSION['usuario_id']);
+            
+            require_once '../views/dashboard.php';
+        } 
+        // CASO 2: USUARIO NO LOGUEADO -> VAMOS AL HOME PÚBLICO
+        else {
             $titulo = "Bienvenido a NexStore";
-            $mensaje_bienvenida = "Gestiona tu inventario fácil y rápido.";
+            
+            // ¡ESTAS SON LAS VARIABLES QUE FALTABAN! 👇
+            $mensaje_bienvenida = "Sistema de Gestión de Inventario Multi-Tenencia.";
             $boton_texto = "Iniciar Sesión";
             $boton_link = "/auth/login";
-            $boton_logout = false;
+            
+            require_once '../views/home.php';
         }
-
-        require_once '../views/home.php';
     }
 }
