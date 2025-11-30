@@ -1,7 +1,7 @@
 <?php
 namespace Src\Models;
 
-use Src\Config\BaseDatos; // Usamos la nueva clase en español
+use Src\Config\BaseDatos;
 use PDO;
 
 class Usuario {
@@ -14,19 +14,18 @@ class Usuario {
     }
 
     // Método para registrar un usuario nuevo
-    public function crear($nombre, $correo, $clave) {
-        // Encriptamos la clave (Hash)
+    public function crear($nombre, $correo, $clave, $nombre_negocio) {
         $clave_encriptada = password_hash($clave, PASSWORD_BCRYPT);
 
-        // Consulta SQL en español
-        $consulta = "INSERT INTO " . $this->tabla . " (nombre, correo, clave) VALUES (:nombre, :correo, :clave)";
+        // Agregamos nombre_negocio al SQL
+        $consulta = "INSERT INTO " . $this->tabla . " (nombre, correo, clave, nombre_negocio) VALUES (:nombre, :correo, :clave, :negocio)";
         
         $sentencia = $this->conexion->prepare($consulta);
 
-        // Asignamos datos
         $sentencia->bindParam(':nombre', $nombre);
         $sentencia->bindParam(':correo', $correo);
         $sentencia->bindParam(':clave', $clave_encriptada);
+        $sentencia->bindParam(':negocio', $nombre_negocio);
 
         if($sentencia->execute()) {
             return true;
@@ -43,4 +42,15 @@ class Usuario {
 
         return $sentencia->rowCount() > 0;
     }
-}
+
+    // --- NUEVO MÉTODO PARA EL LOGIN ---
+    public function obtenerPorCorreo($correo) {
+        $consulta = "SELECT * FROM " . $this->tabla . " WHERE correo = :correo LIMIT 1";
+        $sentencia = $this->conexion->prepare($consulta);
+        $sentencia->bindParam(':correo', $correo);
+        $sentencia->execute();
+
+        return $sentencia->fetch(PDO::FETCH_ASSOC);
+    }
+
+} // <--- ¡ESTA ES LA LLAVE FINAL DE LA CLASE! (Todo debe estar antes de esto)

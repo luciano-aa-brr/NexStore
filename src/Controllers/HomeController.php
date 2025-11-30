@@ -7,37 +7,21 @@ use Src\Models\Usuario;
 class HomeController {
     
     public function index() {
-        // 1. Probamos conexión (Opcional, solo para ver el badge verde)
-        $bd = new BaseDatos();
-        $conn = $bd->obtenerConexion();
-        $estado_db = $conn ? "✅ Conectado a MySQL" : "❌ Error";
-
-        // 2. Usamos el Modelo Usuario
-        $modeloUsuario = new Usuario();
-        
-        // Datos de prueba
-        $nombre_prueba = "Luciano Admin";
-        $correo_prueba = "admin@nexstore.com";
-        $clave_prueba = "123456";
-
-        $mensaje_sistema = "";
-
-        // Lógica en español
-        if ($modeloUsuario->existeCorreo($correo_prueba)) {
-            $mensaje_sistema = "⚠️ El correo $correo_prueba ya está registrado.";
+        // Verificamos si hay sesión activa
+        if (isset($_SESSION['usuario_id'])) {
+            $titulo = "Panel de Control";
+            $mensaje_bienvenida = "Hola, " . $_SESSION['usuario_nombre'] . " 👋";
+            $boton_texto = "Ir a mis Productos";
+            $boton_link = "/productos"; // Crearemos esto en la próxima clase
+            $boton_logout = true; // Para mostrar botón de salir
         } else {
-            if ($modeloUsuario->crear($nombre_prueba, $correo_prueba, $clave_prueba)) {
-                $mensaje_sistema = "✅ ¡Usuario $nombre_prueba creado exitosamente!";
-            } else {
-                $mensaje_sistema = "❌ Error al crear usuario.";
-            }
+            $titulo = "Bienvenido a NexStore";
+            $mensaje_bienvenida = "Gestiona tu inventario fácil y rápido.";
+            $boton_texto = "Iniciar Sesión";
+            $boton_link = "/auth/login";
+            $boton_logout = false;
         }
 
-        // Datos para la vista
-        $titulo = "Bienvenido a NexStore";
-        // Concatenamos el estado de conexión con el mensaje del modelo
-        $estado_db = $estado_db . " | " . $mensaje_sistema;
-        
         require_once '../views/home.php';
     }
 }

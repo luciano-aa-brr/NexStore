@@ -1,4 +1,7 @@
 <?php
+
+session_start();
+
 // 1. CARGADOR AUTOMÁTICO DE CLASES
 spl_autoload_register(function ($clase) {
     $prefijo = 'Src\\';
