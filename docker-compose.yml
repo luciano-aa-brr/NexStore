@@ -1,55 +1,56 @@
 version: '3.8'
 
 services:
-  # --- SERVIDOR WEB (PHP + Apache) ---
+  # --- SERVIDOR WEB ---
   app:
     build: ./docker
-    container_name: nextstore_app
+    container_name: nexstore_app
     ports:
       - "80:80"
     volumes:
-      - .:/var/www/html 
+      - .:/var/www/html
     environment:
       DB_HOST: db
-      DB_NAME: nextstore_db
-      DB_USER: user_next
-      DB_PASSWORD: pass_next
+      DB_NAME: nexstore_db
+      DB_USER: nex_user
+      DB_PASSWORD: nex_password
     depends_on:
       - db
     networks:
-      - nextstore-net 
-  # --- BASE DE DATOS (MySQL) ---
+      - nexstore-red
+
+  # --- BASE DE DATOS ---
   db:
     image: mysql:8.0
-    container_name: nextstore_db
+    container_name: nexstore_db
     environment:
-      MYSQL_ROOT_PASSWORD: root_password  # Cambia esto en producción
-      MYSQL_DATABASE: nextstore_db
-      MYSQL_USER: user_next
-      MYSQL_PASSWORD: pass_next
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: nexstore_db
+      MYSQL_USER: nex_user
+      MYSQL_PASSWORD: nex_password
     volumes:
-      - mysql_data:/var/lib/mysql
+      - nexstore_datos:/var/lib/mysql
     networks:
-      - nextstore-net
+      - nexstore-red
 
-  # --- GESTOR DE BD (phpMyAdmin) ---
+  # --- GESTOR VISUAL (phpMyAdmin) ---
   pma:
     image: phpmyadmin/phpmyadmin
-    container_name: nextstore_pma
+    container_name: nexstore_pma
     environment:
       PMA_HOST: db
-      PMA_USER: user_next
-      PMA_PASSWORD: pass_next
+      PMA_USER: nex_user
+      PMA_PASSWORD: nex_password
     ports:
       - "8080:80"
     depends_on:
       - db
     networks:
-      - nextstore-net
+      - nexstore-red
 
 volumes:
-  mysql_data:
+  nexstore_datos:
 
 networks:
-  nextstore-net:
+  nexstore-red:
     driver: bridge
