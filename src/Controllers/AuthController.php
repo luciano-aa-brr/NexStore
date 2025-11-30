@@ -5,23 +5,27 @@ use Src\Models\Usuario;
 
 class AuthController {
 
-    // --- REGISTRO ---
+    // ==========================================
+    //  SECCIÓN DE REGISTRO
+    // ==========================================
 
-    // 1. Muestra el formulario de registro
+    // 1. Muestra el formulario de registro (GET)
     public function registro() {
         require_once '../views/auth/registro.php';
     }
 
-    // 2. Procesa el registro
+    // 2. Procesa los datos del registro (POST)
     public function guardarUsuario() {
         $nombre = $_POST['nombre'] ?? '';
         $correo = $_POST['correo'] ?? '';
         $clave = $_POST['clave'] ?? '';
-        $nombre_negocio = $_POST['nombre_negocio'] ?? ''; // ¡No olvides esto!
+        // 1. Recibimos el nuevo dato
+        $nombre_negocio = $_POST['nombre_negocio'] ?? ''; 
 
         $errores = [];
         $mensaje_exito = "";
 
+        // 2. Validamos que no esté vacío
         if (empty($nombre) || empty($correo) || empty($clave) || empty($nombre_negocio)) {
             $errores[] = "Todos los campos son obligatorios.";
         }
@@ -32,6 +36,7 @@ class AuthController {
             if ($usuarioModelo->existeCorreo($correo)) {
                 $errores[] = "El correo ya está registrado.";
             } else {
+                // 3. Se lo pasamos al modelo para guardar
                 if ($usuarioModelo->crear($nombre, $correo, $clave, $nombre_negocio)) {
                     $mensaje_exito = "¡Cuenta creada exitosamente! Ahora puedes iniciar sesión.";
                 } else {
@@ -43,14 +48,16 @@ class AuthController {
         require_once '../views/auth/registro.php';
     }
 
-    // --- LOGIN ---
+    // ==========================================
+    //  SECCIÓN DE LOGIN
+    // ==========================================
 
-    // 3. Muestra el formulario de Login
+    // 3. Muestra el formulario de Login (GET)
     public function login() {
         require_once '../views/auth/login.php';
     }
 
-    // 4. Procesa el Login
+    // 4. Procesa la autenticación (POST)
     public function autenticar() {
         $correo = $_POST['correo'] ?? '';
         $clave = $_POST['clave'] ?? '';
@@ -62,15 +69,15 @@ class AuthController {
             $usuarioModelo = new Usuario();
             $usuario = $usuarioModelo->obtenerPorCorreo($correo);
 
-            // Verificamos password
+            // Verificamos si el usuario existe Y la contraseña coincide
             if ($usuario && password_verify($clave, $usuario['clave'])) {
                 
-                // GUARDAMOS SESIÓN
+                // ¡LOGIN EXITOSO! Guardamos los datos en la sesión
                 $_SESSION['usuario_id'] = $usuario['id'];
                 $_SESSION['usuario_nombre'] = $usuario['nombre'];
-                // Asegúrate de que tu BD tenga esta columna, si no, borra esta línea:
-                // $_SESSION['usuario_negocio'] = $usuario['nombre_negocio']; 
+                $_SESSION['usuario_negocio'] = $usuario['nombre_negocio'];
 
+                // Redirigimos al Panel de Control (Home)
                 header("Location: /"); 
                 exit;
 
@@ -79,14 +86,15 @@ class AuthController {
             }
         }
 
+        // Si algo falló, mostramos el login con los errores
         require_once '../views/auth/login.php';
     }
 
     // 5. Cerrar Sesión
     public function cerrarSesion() {
-        session_destroy();
+        session_destroy(); // Destruye todos los datos de la sesión
         header("Location: /auth/login");
         exit;
     }
 
-} // <--- ESTA ES LA LLAVE FINAL QUE CIERRA LA CLASE
+} 

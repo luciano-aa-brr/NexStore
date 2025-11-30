@@ -17,6 +17,12 @@ spl_autoload_register(function ($clase) {
 
     if (file_exists($archivo)) {
         require $archivo;
+    } else {
+        // Esto nos mostrará en pantalla qué está buscando PHP
+        echo "<h1>DEBUG:</h1>";
+        echo "Buscando la clase: <strong>$clase</strong><br>";
+        echo "En la ruta física: <strong>$archivo</strong><br>";
+        echo "Resultado: ❌ NO ENCONTRADO<br><hr>";
     }
 });
 

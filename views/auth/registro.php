@@ -27,6 +27,11 @@
                     <label>Nombre Completo</label>
                     <input type="text" name="nombre" required>
                 </div>
+
+                <div class="grupo-input">
+                    <label>Nombre del Negocio</label>
+                    <input type="text" name="nombre_negocio" required placeholder="Ej: Ferretería El Roble">
+                </div>
                 
                 <div class="grupo-input">
                     <label>Correo Electrónico</label>
@@ -42,8 +47,8 @@
             </form>
             
             <p style="margin-top: 20px; font-size: 0.9em;">
-                ¿Ya tienes cuenta? <a href="#" style="color: var(--color-lavanda);">Inicia Sesión</a>
-            </p>
+    ¿Ya tienes cuenta? <a href="/auth/login" style="color: var(--color-lavanda);">Inicia Sesión</a>
+</p>
         </div>
     </div>
 </body>
